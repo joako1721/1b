@@ -1,12 +1,25 @@
-
-
+#include "Entity.hpp"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
 #include <iostream>
+#include <unordered_map>
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+
+class Player : public Entity {
+public:
+  Player(float x, float y, float w, float h, int color)
+      : Entity(x, y, w, h, color){};
+
+  void update() override {}
+};
+
+class Box : public Entity {
+public:
+  Box(float x, float y, float w, float h, int color)
+      : Entity(x, y, w, h, color){};
+  void update() override {}
+};
 
 int main(int argc, char *argv[]) {
 
@@ -32,12 +45,13 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  bool quit;
-  SDL_Rect rect;
-  rect.x = WINDOW_WIDTH / 4;
-  rect.y = WINDOW_HEIGHT / 4;
-  rect.w = WINDOW_WIDTH / 2;
-  rect.h = WINDOW_HEIGHT / 2;
+  bool quit = false;
+
+  Player player(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, 20.0, 20.0, 0xFF0000);
+
+  Box box(WINDOW_WIDTH - 20, WINDOW_HEIGHT - 20, 15, 15, 0x0000FF);
+
+  std::unordered_map<SDL_Keycode, bool> keyMap;
 
   while (!quit) {
     SDL_Event e;
@@ -45,16 +59,27 @@ int main(int argc, char *argv[]) {
       if (e.type == SDL_QUIT) {
         break;
       }
-      if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q) {
-        break;
+      if (e.type == SDL_KEYDOWN) {
+        keyMap[e.key.keysym.sym] = true;
+      }
+      if (e.type == SDL_KEYUP) {
+        keyMap[e.key.keysym.sym] = false;
       }
     }
+
+    auto const &it = keyMap.find(SDLK_q);
+    if (it != keyMap.end() && it->second) {
+      break;
+    }
+    player.update();
+    box.update();
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
+    player.draw(renderer);
+    box.draw(renderer);
+
     SDL_RenderPresent(renderer);
   }
   SDL_DestroyRenderer(renderer);

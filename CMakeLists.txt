@@ -16,6 +16,7 @@ find_package(SDL2_ttf REQUIRED)
 # Create a list of your source files in the src directory
 set(SOURCES
     src/main.cpp
+    src/Entity.cpp
     #    src/Player.cpp
     #    src/World.cpp
     #    src/Game.cpp
