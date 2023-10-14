@@ -18,6 +18,10 @@ public:
 
   float getX() const;
   float getY() const;
+  void setX(float x);
+  void setY(float y);
+
+  void move(float x, float y);
 
 private:
   SDL_FRect box;
