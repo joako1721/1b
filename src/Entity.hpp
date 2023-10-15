@@ -3,8 +3,8 @@
 
 class Entity {
 public:
-  Entity(float x, float y, float w, float h, int color)
-      : box({x, y, w, h}), color(color){};
+  Entity(float x, float y, float w, float h, int color, float mass)
+      : box({x, y, w, h}), color(color), mass(mass){};
 
   virtual ~Entity() = default;
 
@@ -21,9 +21,13 @@ public:
   void setX(float x);
   void setY(float y);
 
+  float getMass() const;
+  void setMass(float m);
+
   void move(float x, float y);
 
 private:
   SDL_FRect box;
   int color;
+  float mass;
 };

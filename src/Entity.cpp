@@ -10,3 +10,7 @@ void Entity::move(float x, float y) {
   box.x += x;
   box.y += y;
 }
+
+void Entity::setMass(float mass) { this->mass = mass; }
+
+float Entity::getMass() const { return mass; }

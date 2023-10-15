@@ -1,63 +1,13 @@
+#include "Box.hpp"
 #include "Entity.hpp"
+#include "Player.hpp"
 #include <SDL2/SDL.h>
-#include <cmath>
 #include <iostream>
-#include <unordered_map>
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-float distance(float x1, float y1, float x2, float y2) {
-  return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
-}
-
-class Player : public Entity {
-public:
-  Player(float x, float y, float w, float h, int color, Entity *e)
-      : Entity(x, y, w, h, color), eBox(e){};
-
-  void handleInput(std::unordered_map<SDL_Keycode, bool> &keyMap) {
-    for (auto const &key : keyMap) {
-      if (key.first == SDLK_w && key.second) {
-        this->move(0, -1 * 0.01);
-      }
-      if (key.first == SDLK_s && key.second) {
-        this->move(0, 1 * 0.01);
-      }
-      if (key.first == SDLK_a && key.second) {
-        this->move(-1 * 0.01, 0);
-      }
-      if (key.first == SDLK_d && key.second) {
-        this->move(1 * 0.01, 0);
-      }
-    }
-  }
-
-  void update() override {
-    draw_line = (distance(getX(), getY(), eBox->getX(), eBox->getY()) < 200);
-  }
-
-  void draw(SDL_Renderer *renderer) override {
-    Entity::draw(renderer);
-    if (draw_line) {
-      SDL_SetRenderDrawColor(renderer, 0x13, 0x38, 0xBE, 255);
-      SDL_RenderDrawLineF(renderer, getX(), getY(), eBox->getX(), eBox->getY());
-    }
-  }
-
-private:
-  bool draw_line = false;
-  Entity *eBox;
-};
-
-class Box : public Entity {
-public:
-  Box(float x, float y, float w, float h, int color)
-      : Entity(x, y, w, h, color){};
-  void update() override {}
-};
-
-int main(int argc, char *argv[]) {
+int main() {
 
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -83,9 +33,10 @@ int main(int argc, char *argv[]) {
 
   bool quit = false;
 
-  Box box(WINDOW_WIDTH - 20, WINDOW_HEIGHT - 20, 15, 15, 0x0000FF);
-  Player player(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, 20.0, 20.0, 0xFF0000,
-                &box);
+  Box box(WINDOW_WIDTH - 20, WINDOW_HEIGHT - 20, 15, 15, 0x0000FF, 5.0f);
+  Box box2(20, 20, 15, 15, 0xFFFF00, 5.0f);
+  Player player(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, 20.0, 20.0, 0xFF00FF,
+                &box, 10.0);
 
   std::unordered_map<SDL_Keycode, bool> keyMap;
 
@@ -109,6 +60,7 @@ int main(int argc, char *argv[]) {
     }
 
     box.update();
+    box2.update();
     player.update();
     player.handleInput(keyMap);
 
@@ -117,6 +69,7 @@ int main(int argc, char *argv[]) {
 
     player.draw(renderer);
     box.draw(renderer);
+    box2.draw(renderer);
 
     SDL_RenderPresent(renderer);
   }

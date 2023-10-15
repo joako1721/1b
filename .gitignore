@@ -1,1 +1,4 @@
 build/
+.fleet/
+.cache/
+.vscode/

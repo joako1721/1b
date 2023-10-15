@@ -17,6 +17,9 @@ find_package(SDL2_ttf REQUIRED)
 set(SOURCES
     src/main.cpp
     src/Entity.cpp
+    src/Player.cpp
+    src/Box.cpp
+    src/MathUtils.cpp
     #    src/Player.cpp
     #    src/World.cpp
     #    src/Game.cpp
